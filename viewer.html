@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    #map {{ height: 100vh; width: 100%; }}
+    #map { height: 100vh; width: 100%; }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -14,23 +14,29 @@
 </head>
 <body>
   <div id="map"></div>
-<script>
-  window.onload = function () {
-    const recordId = new URLSearchParams(window.location.search).get("record");
+  <script>
+    window.onload = function () {
+      const recordId = new URLSearchParams(window.location.search).get("record");
 
-    const map = L.map('map').setView([51.5, -0.1], 13);
+      const map = L.map('map').setView([51.5, -0.1], 13);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
 
-    if (recordId && typeof geojsonLookup !== 'undefined' && geojsonLookup[recordId]) {
-      const layer = L.geoJSON(geojsonLookup[recordId]).addTo(map);
-      map.fitBounds(layer.getBounds());
-    } else {
-      alert("Polygon not found or geojsonLookup not loaded.");
-    }
-  };
-</script>
+      // Check if geojsonLookup is loaded and recordId exists
+      if (recordId && typeof geojsonLookup !== 'undefined') {
+        const shape = geojsonLookup[recordId];
+        if (shape) {
+          const layer = L.geoJSON(shape).addTo(map);
+          map.fitBounds(layer.getBounds());
+        } else {
+          alert("Polygon not found for record ID: " + recordId);
+        }
+      } else {
+        alert("geojsonLookup is not loaded or recordId is missing.");
+      }
+    };
+  </script>
 </body>
 </html>
